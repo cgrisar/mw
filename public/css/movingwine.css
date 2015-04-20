@@ -1,0 +1,34 @@
+thead
+    {
+        background-color: lightgrey;
+    }
+
+div.row
+    {
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+.floatrighticon
+    {
+        float:right;
+    }
+
+#rightcolumntable
+    {
+        margin-top: 32px;
+    }
+
+#slotsmessage
+    {
+        margin:2.39rem 0em;
+        padding:0.55em 1em;
+    }
+
+.table.verticalalign td{
+    vertical-align: top;
+}
+.ui.modal, .ui.grid
+{
+    font-size: 0.875em;
+}

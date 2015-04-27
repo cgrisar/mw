@@ -61,6 +61,9 @@
         </div>
     {!! Form::close() !!}
 
+    <div class="ui modal" id="SemanticEditor">
+
+    </div>
     <!-- modal dialog for adding an address -->
     <div class="ui modal" id="createAddress">
         <div class="header">
@@ -113,9 +116,35 @@
     <script>
         $(document).ready(function(){
 
-            // New record
+            // display the datatable
+
+            $('#adressesTable').dataTable({
+
+                "layout": '<div data-feature="dt_Table"></div>',
+
+                "ajax": "/admin/relationshipTmpAddressesAjax",
+
+                "columns": [
+                    { "data": null,
+                        "render": function(row, type, val, meta){
+                            return "1"
+                        }
+                    },
+                    { "data": null,
+                        "render": function(row, type, val, meta){
+                            return row.address + "</br>" + row.zip + "&nbsp;" + row.county + "</br>" + row.country
+                        }},
+                    { "data": "phone" },
+                    { "data": "email" }
+                ]
+            });
+
+
+            // Add a new address
+
             $('i.plus').on('click', function (e) {
                 e.preventDefault();
+                $("#SemanticEditor").SemanticEditor('show');
                 var ajaxSucceeded = false;
 
                 $('#createAddress')
@@ -128,7 +157,6 @@
                                 $("#createAddressForm .field :input")
                                         .attr("placeholder", "")
                                         .val("");
-                                alert(settings.action)
                             },
 
                             onApprove: function () {
@@ -167,37 +195,18 @@
                                     }
                                 });
 
+                                $('#adressesTable').DataTable().ajax.reload();
                                 return ajaxSucceeded;
 
                             }
                         })
-                        .modal('show')
+                        .modal('show');
+
             } );
 
             $('#createAddressForm .field').change(function(){
                 $(this).removeClass("error")
             });
-
-            $('#adressesTable').dataTable({
-
-                "layout": '<div data-feature="dt_Table"></div>',
-
-                "ajax": "/admin/relationshipAddressesAjax",
-
-                "columns": [
-                    { "data": null,
-                      "render": function(row, type, val, meta){
-                          return "1"
-                      }
-                    },
-                    { "data": null,
-                      "render": function(row, type, val, meta){
-                          return row.address + "</br>" + row.zip + "&nbsp;" + row.county + "</br>" + row.country
-                      }},
-                    { "data": "phone" },
-                    { "data": "email" }
-                ]
-              });
 
             $('.ui.dropdown')
                     .dropdown();

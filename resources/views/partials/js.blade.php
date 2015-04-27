@@ -7,7 +7,6 @@
 <script src="/js/dataTables.tableTools.js" type="text/javascript"></script>
 <script src="/js/dataTables.editor.js" type="text/javascript"></script>
 <script src="/js/dataTables.semanticpluginv2.js" type="text/javascript"></script>
-
 <script src="/js/editor.semantic.js" type="text/javascript"></script>
 <!-- scripts related to semantic -->
 

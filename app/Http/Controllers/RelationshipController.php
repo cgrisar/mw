@@ -33,17 +33,23 @@ class RelationshipController extends Controller {
 	public function indexajax()
 	{
 		//
-		$relationships = Datatable::output(Relationship::all(), ['key'=> 'id','newkey' => 'Dt_Rowid', 'transform' => 'row_']);
+		$relationships = Datatable::output(Relationship::all(), ['key'=> 'id', 'newkey' => 'Dt_Rowid', 'transform' => 'row_']);
 		return ['draw' => '1', 'RecordCount' => $relationships->count(), 'data' => $relationships];
 	}
 
 	public function relationshipAddressesAjax()
 	{
-		$addresses = Datatable::output(Address::all(), ['key'=> 'id','newkey' => 'Dt_Rowid', 'transform' => 'row_']);
+		$addresses = Datatable::output(Address::all(), ['key'=> 'id', 'newkey' => 'Dt_Rowid', 'transform' => 'row_']);
 		return ['draw' => '1', 'RecordCount' => $addresses->count(), 'data' => $addresses];
 
 	}
 
+	public function relationshipTmpAddressesAjax()
+	{
+		$addresses = Datatable::output(TmpAddress::all(), ['key'=> 'id', 'newkey' => 'Dt_Rowid', 'transform' => 'row_']);
+		return ['draw' => '1', 'RecordCount' => $addresses->count(), 'data' => $addresses];
+
+	}
 	public function relationshipTmpAddressesStore(Requests\AddressRequest $request)
 	{
 		$tmpAddress = new TmpAddress;

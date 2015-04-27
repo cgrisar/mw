@@ -42,6 +42,7 @@ Route::get('warehouses/{id}/slots/{slot}/delete', 'SlotController@destroy');
  */
 Route::get('admin/relationshipsAjax', 'RelationshipController@indexajax');
 Route::get('admin/relationshipAddressesAjax', 'RelationshipController@relationshipAddressesAjax');
+Route::get('admin/relationshipTmpAddressesAjax', 'RelationshipController@relationshipTmpAddressesAjax');
 Route::get('relationships', 'RelationshipController@index');
 Route::get('relationships/create', 'RelationshipController@create');
 

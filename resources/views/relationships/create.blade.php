@@ -61,11 +61,8 @@
         </div>
     {!! Form::close() !!}
 
-    <div class="ui modal" id="SemanticEditor">
-
-    </div>
     <!-- modal dialog for adding an address -->
-    <div class="ui modal" id="createAddress">
+    <div class="ui modal" id="createUpdateModal">
         <div class="header">
             Adresses
         </div>
@@ -144,7 +141,10 @@
 
             $('i.plus').on('click', function (e) {
                 e.preventDefault();
-                $("#SemanticEditor").SemanticEditor('show');
+                $("body")
+                        .SemanticEditor({entity: 'relationship'})
+                        .SemanticEditor('show', 'delete');
+
                 var ajaxSucceeded = false;
 
                 $('#createAddress')

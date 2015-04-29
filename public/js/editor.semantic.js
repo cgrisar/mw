@@ -7,12 +7,14 @@
         url:        '',
         action:     '',
         modalCU:    '',
-        modalD:     '<i class="close icon"></i>' +
-                    '<div class="header">Warning</div>' +
-                    '<div class="content">Do you really want to delete ' + this.entity + '?</div>' +
-                    '<div class="actions">' +
-                        '<div class="ui cancel button">Cancel</div>' +
-                        '<div class="ui ok button">OK</div>' +
+        modalD:     '<div class="ui modal" id="DeleteModal">' +
+                        '<i class="close icon"></i>' +
+                        '<div class="header">Delete</div>' +
+                        '<div class="content">Do you really want to delete this row ?</div>' +
+                        '<div class="actions">' +
+                            '<div class="ui red cancel button">Cancel</div>' +
+                            '<div class="ui positive button">OK</div>' +
+                        '</div>' +
                     '</div>'
     };
 
@@ -21,15 +23,21 @@
             if(options) {
                 $.extend(defaults,options);
             }
-            alert(defaults.string1 + defaults.string2);
         },
-        // show a Semantic Modal. Arg
+
+        // show a Semantic Modal. arg = action
         show: function(arg) {
-            var dialog = $(defaults.modalD);
-            $(this)
-                .append(dialog)
-                .modal('show');
+            if(arg == "delete") {
+                var dialog = $(defaults.modalD);
+                $('body').append(dialog);
+                $('#DeleteModal').modal('show')
+            } else {
+                var dialog = $(defaults.modalCU);
+                $('body').append(dialog);
+                $('#CreateUpdateModal').modal('show');
+            }
         },
+
         hide: function() {
 
         }

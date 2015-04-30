@@ -4,18 +4,11 @@
 (function($) {
     var defaults = {
         entity:     '',
+        fields:     '{}',
         url:        '',
         action:     '',
         modalCU:    '',
-        modalD:     '<div class="ui modal" id="DeleteModal">' +
-                        '<i class="close icon"></i>' +
-                        '<div class="header">Delete</div>' +
-                        '<div class="content">Do you really want to delete this row ?</div>' +
-                        '<div class="actions">' +
-                            '<div class="ui red cancel button">Cancel</div>' +
-                            '<div class="ui positive button">OK</div>' +
-                        '</div>' +
-                    '</div>'
+        modalD:     ''
     };
 
     var methods = {
@@ -28,9 +21,9 @@
         // show a Semantic Modal. arg = action
         show: function(arg) {
             if(arg == "delete") {
-                var dialog = $(defaults.modalD);
+                var dialog = $(methods._createDeleteForm());
                 $('body').append(dialog);
-                $('#DeleteModal').modal('show')
+                $('#' + defaults.entity + 'DeleteModal').modal('show')
             } else {
                 var dialog = $(defaults.modalCU);
                 $('body').append(dialog);
@@ -40,8 +33,27 @@
 
         hide: function() {
 
+        },
+
+        // private methods
+
+        _createDeleteForm: function(){
+            if(defaults.modalD == '') {
+                return '<div class="ui modal" id="' + defaults.entity + 'DeleteModal">' +
+                            '<i class="close icon"></i>' +
+                            '<div class="header">Delete</div>' +
+                            '<div class="content">Do you really want to delete this ' + defaults.entity + ' ?</div>' +
+                            '<div class="actions">' +
+                                '<div class="ui red cancel button">Cancel</div>' +
+                                '<div class="ui positive button">OK</div>' +
+                            '</div>' +
+                        '</div>'
+            } else {
+                return defaults.modalD
+            }
         }
     };
+
     $.fn.SemanticEditor = function(method) {
         var args = arguments;
         var $this = this;

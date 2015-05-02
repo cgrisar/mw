@@ -111,9 +111,48 @@
 
 @section('dTScript')
     <script>
+        var editor;
+
         $(document).ready(function(){
 
             // display the datatable
+
+            editor = new $.fn.dataTable.Editor( {
+                ajax: "../php/staff.php",
+                table: "#example",
+                fields: [ { multiple:
+                    [
+                        {
+                        label: "first",
+                        name: "second"
+                    }, {
+                        label: "first",
+                        name: "second"}
+                    ]},{
+                    label: "First name:",
+                    name: "first_name"
+                }, {
+                    label: "Last name:",
+                    name: "last_name"
+                }, {
+                    label: "Position:",
+                    name: "position"
+                }, {
+                    label: "Office:",
+                    name: "office"
+                }, {
+                    label: "Extension:",
+                    name: "extn"
+                }, {
+                    label: "Start date:",
+                    name: "start_date",
+                    type: "date"
+                }, {
+                    label: "Salary:",
+                    name: "salary"
+                }
+                ]
+            } );
 
             $('#adressesTable').dataTable({
 

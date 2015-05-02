@@ -51,6 +51,14 @@
             } else {
                 return defaults.modalD
             }
+        },
+
+        _createCreateUpdateForm: function(){
+            if(defaults.modalCU == '' && defaults.fields){
+                for
+            } else {
+
+            }
         }
     };
 
@@ -69,3 +77,35 @@
     };
 
 })(jQuery);
+
+Editor.prototype.add = function ( cfg )
+{
+    // Allow multiple fields to be added at the same time
+    if ( $.isArray( cfg ) ) {
+        for ( var i=0, iLen=cfg.length ; i<iLen ; i++ ) {
+            this.add( cfg[i] );
+        }
+    }
+    else {
+        var name = cfg.name;
+
+        if ( name === undefined ) {
+            throw "Error adding field. The field requires a `name` option";
+        }
+
+        if ( this.s.fields[ name ] ) {
+            throw "Error adding field '"+name+"'. A field already exists with this name";
+        }
+
+        // Allow the data source to add / modify the field properties
+        // Dev: would this be better as an event `preAddField`? And have the
+        // data sources init only once, but can listen for such events? More
+        // complexity, but probably more flexible...
+        this._dataSource( 'initField', cfg );
+
+        this.s.fields[ name ] = new Editor.Field( cfg, this.classes.field, this );
+        this.s.order.push( name );
+    }
+
+    return this;
+};

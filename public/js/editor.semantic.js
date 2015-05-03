@@ -1,7 +1,25 @@
 /**
  * Created by charlesgrisar on 20/04/15.
  */
-(function($) {
+(function(window, document, undefined) {
+
+    var SemanticEditor = function ( opts )
+    {
+        if ( ! this instanceof SemanticEditor ) {
+            alert( "DataTables Editor must be initialised as a 'new' instance'" );
+        }
+
+        this._constructor( opts );
+    };
+
+// Export Editor as a DataTables property
+    DataTable.SemanticEditor = SemanticEditor;
+    $.fn.DataTable.SemanticEditor = Editor;
+
+    SemanticEditor.prototype.addFields = function(fields){
+
+    };
+
     var defaults = {
         entity:     '',
         fields:     '{}',
@@ -15,6 +33,18 @@
         init: function(options) {
             if(options) {
                 $.extend(defaults,options);
+            };
+            if(defaults.modalCU == '' && defaults.fields) {
+
+                for (var i in defaults.fields) {
+                    var obj = defaults.fields[i];
+                    if (obj.multiple) {
+
+                        console.log("Array " + obj.multiple)
+                    } else {
+                        console.log("Field " + obj.name)
+                    }
+                }
             }
         },
 
@@ -55,7 +85,13 @@
 
         _createCreateUpdateForm: function(){
             if(defaults.modalCU == '' && defaults.fields){
-                for
+                for( var i in defaults.fields){
+                    if(defaults.fields[i].isArray()) {
+                        console.log("Array " + defaults.fields[i])
+                    } else {
+                        console.log("Field " + defaults.fields[i].name)
+                    }
+                }
             } else {
 
             }
@@ -77,35 +113,3 @@
     };
 
 })(jQuery);
-
-Editor.prototype.add = function ( cfg )
-{
-    // Allow multiple fields to be added at the same time
-    if ( $.isArray( cfg ) ) {
-        for ( var i=0, iLen=cfg.length ; i<iLen ; i++ ) {
-            this.add( cfg[i] );
-        }
-    }
-    else {
-        var name = cfg.name;
-
-        if ( name === undefined ) {
-            throw "Error adding field. The field requires a `name` option";
-        }
-
-        if ( this.s.fields[ name ] ) {
-            throw "Error adding field '"+name+"'. A field already exists with this name";
-        }
-
-        // Allow the data source to add / modify the field properties
-        // Dev: would this be better as an event `preAddField`? And have the
-        // data sources init only once, but can listen for such events? More
-        // complexity, but probably more flexible...
-        this._dataSource( 'initField', cfg );
-
-        this.s.fields[ name ] = new Editor.Field( cfg, this.classes.field, this );
-        this.s.order.push( name );
-    }
-
-    return this;
-};

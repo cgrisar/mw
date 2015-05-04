@@ -111,7 +111,7 @@
 
 @section('dTScript')
     <script>
-        var editor;
+        var sEditor;
 
         $(document).ready(function(){
 
@@ -144,44 +144,34 @@
 
             $('i.plus').on('click', function (e) {
                 e.preventDefault();
-                $("body").SemanticEditor(
+                sEditor = new $.fn.dataTable.sEditor(
                             {   entity: 'relationship',
-                                fields: [ { multiple:
-                                    [
-                                    {
-                                        "label": "first",
-                                        "name": "second"
-                                    }, {
-                                        "label": "first",
-                                        "name": "second"
+                                "fields" : [
+                                    { "structure" : "field",
+                                        "type" : "input",
+                                        "label": "name",
+                                        "field": "name"
+                                    },
+                                    { "structure": "multiple",
+                                        "field":
+                                                [{  "structure": "field",
+                                                    "type": "input",
+                                                    "label": "zip",
+                                                    "name": "zip"
+                                                }, {  "structure": "field",
+                                                    "type": "input",
+                                                    "label": "city",
+                                                    "name": "city"
+                                                }]
+                                    },
+                                    { "structure": "field",
+                                        "type": "input",
+                                        "label": "country",
+                                        "name": "country"
                                     }
-                            ]
-                                            }, {
-                                                "label": "First name:",
-                                                "name": "first_name"
-                                            }, {
-                                                "label": "Last name:",
-                                                "name": "last_name"
-                                            }, {
-                                                "label": "Position:",
-                                                "name": "position"
-                                            }, {
-                                                "label": "Office:",
-                                                "name": "office"
-                                            }, {
-                                                "label": "Extension:",
-                                                "name": "extn"
-                                            }, {
-                                                "label": "Start date:",
-                                                "name": "start_date",
-                                                "type": "date"
-                                            }, {
-                                                "label": "Salary:",
-                                                "name": "salary"
-                                            }
-                                        ]
+                                ]
                             })
-                        .SemanticEditor('show', 'delete');
+                        .sEditor('show', 'delete');
 
                 var ajaxSucceeded = false;
 

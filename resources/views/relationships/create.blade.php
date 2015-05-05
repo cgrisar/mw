@@ -61,52 +61,6 @@
         </div>
     {!! Form::close() !!}
 
-    <!-- modal dialog for adding an address -->
-    <div class="ui modal" id="createUpdateModal">
-        <div class="header">
-            Adresses
-        </div>
-        <div class="content">
-            <div class="ui form" id="createAddressForm">
-                <?php
-                $encrypter = app('Illuminate\Encryption\Encrypter');
-                $encrypted_token = $encrypter->encrypt(csrf_token());
-                ?>
-                <input id="token" type="hidden" value="{{$encrypted_token}}">
-
-                <div class="required field">
-                    <label>Address</label>
-                    <input type="text" id="address">
-                </div>
-                <div class="two fields">
-                    <div class="field">
-                        <label>Zip</label>
-                        <input type="text" id="zip">
-                    </div>
-                    <div class="field">
-                        <label>County</label>
-                        <input type="text" id="county">
-                    </div>
-                </div>
-                <div class="field">
-                    <label>Country</label>
-                    <input type="text" id="country">
-                </div>
-                <div class="field">
-                    <label>Phone</label>
-                    <input type="text" id="phone">
-                </div>
-                <div class="field">
-                    <label>E-mail</label>
-                    <input type="text" id="email">
-                </div>
-            </div>
-        </div>
-        <div class="actions">
-            <div class="ui red cancel button">Cancel</div>
-            <div class="ui positive button">Save</div>
-        </div>
-    </div>
 @endsection
 
 @section('dTScript')
@@ -115,6 +69,34 @@
 
         $(document).ready(function(){
 
+            // create the Editor
+            sEditor = new $.fn.dataTable.sEditor(
+                    {   entity: 'relationship',
+                        "fields" : [
+                            { "structure" : "field",
+                                "type" : "input",
+                                "label": "name",
+                                "field": "name"
+                            },
+                            { "structure": "multiple",
+                                "field":
+                                        [{  "structure": "field",
+                                            "type": "input",
+                                            "label": "zip",
+                                            "name": "zip"
+                                        }, {  "structure": "field",
+                                            "type": "input",
+                                            "label": "city",
+                                            "name": "city"
+                                        }]
+                            },
+                            { "structure": "field",
+                                "type": "input",
+                                "label": "country",
+                                "name": "country"
+                            }
+                        ]
+                    });
             // display the datatable
 
 
@@ -144,92 +126,7 @@
 
             $('i.plus').on('click', function (e) {
                 e.preventDefault();
-                sEditor = new $.fn.dataTable.sEditor(
-                            {   entity: 'relationship',
-                                "fields" : [
-                                    { "structure" : "field",
-                                        "type" : "input",
-                                        "label": "name",
-                                        "field": "name"
-                                    },
-                                    { "structure": "multiple",
-                                        "field":
-                                                [{  "structure": "field",
-                                                    "type": "input",
-                                                    "label": "zip",
-                                                    "name": "zip"
-                                                }, {  "structure": "field",
-                                                    "type": "input",
-                                                    "label": "city",
-                                                    "name": "city"
-                                                }]
-                                    },
-                                    { "structure": "field",
-                                        "type": "input",
-                                        "label": "country",
-                                        "name": "country"
-                                    }
-                                ]
-                            })
-                        .sEditor('show', 'delete');
-
-                var ajaxSucceeded = false;
-
-                $('#createAddress')
-                        .modal({
-                            onShow: function(){
-                                var settings = $(this).settings;
-
-                                $("#createAddressForm .field")
-                                        .removeClass("error");
-                                $("#createAddressForm .field :input")
-                                        .attr("placeholder", "")
-                                        .val("");
-                            },
-
-                            onApprove: function () {
-
-                                var $_token = $('#token').val();
-                                var dataJs = {
-                                    address: $("#address").val(),
-                                    zip: $("#zip").val(),
-                                    county: $("#county").val(),
-                                    country: $("#country").val(),
-                                    tel: $("#tel").val(),
-                                    email: $("#email").val()
-                                };
-
-                                $.ajax({
-                                    type: 'POST',
-                                    async: false,
-                                    headers: {'X-XSRF-TOKEN': $_token},
-                                    dataType: 'json',
-                                    data: dataJs,
-                                    url: '/admin/relationshipTmpAddressesStoreAjax',
-
-                                    success: function(){
-                                        ajaxSucceeded = true;
-                                        console.log('did it')
-                                    },
-
-                                    error: function (xhr, textstatus, errorThrown) {
-                                        ajaxSucceeded = false;
-                                        $.each(JSON.parse(xhr.responseText), function (index, element) {
-                                            $('#' + index)
-                                                    .attr("placeholder", element)
-                                                    .parent().addClass("error")
-
-                                        });
-                                    }
-                                });
-
-                                $('#adressesTable').DataTable().ajax.reload();
-                                return ajaxSucceeded;
-
-                            }
-                        })
-                        .modal('show');
-
+                sEditor.show('create')
             } );
 
             $('#createAddressForm .field').change(function(){

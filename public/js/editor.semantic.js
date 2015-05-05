@@ -22,143 +22,123 @@
         DataTable.sEditor = sEditor;
         $.fn.DataTable.sEditor = sEditor;
 
-        sEditor.prototype._constructor = function ( init )
-        {
-            init = $.extend( true, {}, sEditor.defaults, init );
-            this.s = $.extend( true, {}, sEditor.models.settings, {
-                table:      init.domTable || init.table,
-                dbTable:    init.dbTable || null, // legacy
-                ajaxUrl:    init.ajaxUrl,
-                ajax:       init.ajax,
-                idSrc:      init.idSrc,
-                dataSource: init.domTable || init.table ?
-                    Editor.dataSources.dataTable :
-                    Editor.dataSources.html,
-                formOptions: init.formOptions
-            } );
+        sEditor.prototype._constructor = function ( init ) {
+            this.options = $.extend( true, {}, sEditor.defaults, init );
+            this.options.modalCU = $(sEditor.CUForm().create(init.fields))
+           // init.modalD = $(this.createDForm());
         };
 
-        sEditor.prototype.addFields = function(fields){
-            var fieldWrapper = '';
+        sEditor.prototype.show = function(action){
+            if(action != 'delete') {
+                var form = '#' + this.options.entity + "CUForm";
+                $("body").append(this.options.modalCU);
+                $(form)
+                    .modal('show');
+                /*
+                    .modal({
+                        onShow: function(){
+                            var settings = $(this).settings;
 
-            for(var i=0, iLen = fields.length; i < iLen; i++){
-                if(fields[i].structure == "multiple"){
-                    fieldWrapper = fieldWrapper + '<div class="multiple">';
-                    this.addFields(fields[i].field);
-                    fieldWrapper = fieldWrapper + '</div>'
-                } else {
-                    fieldWrapper = fieldWrapper + '<div class="field"> ' +
-                    fields[i].label +
-                    ' </div>';
-                }
+                            $(form + " .field")
+                                .removeClass("error");
+                            $(form + " .field :input")
+                                .attr("placeholder", "")
+                                .val("");
+                        }
+/*
+                        onApprove: function () {
+
+                            var $_token = $('#token').val();
+                            var dataJs = {
+                                address: $("#address").val(),
+                                zip: $("#zip").val(),
+                                county: $("#county").val(),
+                                country: $("#country").val(),
+                                tel: $("#tel").val(),
+                                email: $("#email").val()
+                            };
+
+                            $.ajax({
+                                type: 'POST',
+                                async: false,
+                                headers: {'X-XSRF-TOKEN': $_token},
+                                dataType: 'json',
+                                data: dataJs,
+                                url: '/admin/relationshipTmpAddressesStoreAjax',
+
+                                success: function(){
+                                    ajaxSucceeded = true;
+                                    console.log('did it')
+                                },
+
+                                error: function (xhr, textstatus, errorThrown) {
+                                    ajaxSucceeded = false;
+                                    $.each(JSON.parse(xhr.responseText), function (index, element) {
+                                        $('#' + index)
+                                            .attr("placeholder", element)
+                                            .parent().addClass("error")
+
+                                    });
+                                }
+                            });
+
+                            $('#adressesTable').DataTable().ajax.reload();
+                            return ajaxSucceeded;
+
+                        }
+
+                    })
+*/
             }
-            return fieldWrapper
         };
 
-        sEditor.models = {};
-        sEditor.models.settings = {
-            "ajaxUrl": null,
+        sEditor.CUForm = {};
+        sEditor.CUForm.prototype = {
+            modalH: function() {
+                return '<div class="ui modal" id=">' + this.options.entity + 'CUForm">' +
+                    '<i class="close icon"></i>' +
+                    '<div class="header">' + this.options.entity + '</div>' +
+                    '<div class="content">' +
+                    '<div class="ui form">';
+            },
 
-            /**
-             * Ajax submit function.
-             * This is directly set by the initialisation parameter / default of the same name.
-             *  @type function
-             *  @default null
-             */
-            "ajax": null,
+            modalE: function(){
+                return          '</div>' +       // form
+                    '</div>' +              // content
+                    '<div class="actions">' +
+                    '<div class="ui red cancel button">Cancel</div>' +
+                    '<div class="ui positive button">Save</div>' +
+                    '</div>' +
+                    '</div>';
+            },
 
-            /**
-             * Data source for get and set data actions. This allows Editor to perform
-             * as an Editor for virtually any data source simply by defining additional
-             * data sources.
-             *  @type object
-             *  @default null
-             */
-            "dataSource": null,
+            create: function (fields) {
+                return this.modalH() + this.addFields(fields) + this.modalE();
+            },
 
-            /**
-             * DataTable selector, can be anything that the Api supports
-             * This is directly set by the initialisation parameter / default of the same name.
-             *  @type string
-             *  @default null
-             */
-            "domTable": null,
+            addFields: function (fields) {
+                var enumerator = ['one', 'two', 'three', 'four', 'five'];
 
-            /**
-             * The initialisation object that was given by the user - stored for future reference.
-             * This is directly set by the initialisation parameter / default of the same name.
-             *  @type string
-             *  @default null
-             */
-            "opts": null,
+                // opening modal, content and form divs
+                var modalCU = '';
 
-            /**
-             * The display controller object for the Form.
-             * This is directly set by the initialisation parameter / default of the same name.
-             *  @type string
-             *  @default null
-             */
-            "displayController": null,
-
-            /**
-             * The form fields - see {@link Editor.models.field} for details of the
-             * objects held in this array.
-             *  @type object
-             *  @default null
-             */
-            "fields": {},
-
-            /**
-             * Field order - order that the fields will appear in on the form. Array of strings,
-             * the names of the fields.
-             *  @type array
-             *  @default null
-             */
-            "order": [],
-
-            /**
-             * The ID of the row being edited (set to -1 on create and remove actions)
-             *  @type string
-             *  @default null
-             */
-            "id": -1,
-
-            /**
-             * Flag to indicate if the form is currently displayed (true) or not (false)
-             *  @type string
-             *  @default null
-             */
-            "displayed": false,
-
-            /**
-             * Flag to indicate if the form is current in a processing state (true) or not (false)
-             *  @type string
-             *  @default null
-             */
-            "processing": false,
-
-            /**
-             * Developer provided identifier for the elements to be edited (i.e. at
-             * `dt-type row-selector` to select rows to edit or delete.
-             *  @type array
-             *  @default null
-             */
-            "modifier": null,
-
-            /**
-             * The current form action - 'create', 'edit' or 'remove'. If no current action then
-             * it is set to null.
-             *  @type string
-             *  @default null
-             */
-            "action": null,
-
-            /**
-             * JSON property from which to read / write the row's ID property.
-             *  @type string
-             *  @default null
-             */
-            "idSrc": null};
+                // add the fields
+                for (var i = 0, iLen = fields.length; i < iLen; i++) {
+                    if (fields[i].structure == "multiple") {
+                        modalCU += '<div class="' + enumerator[fields[i - 1].field.length] + ' fields">' +
+                        this.CUForm.addFields(fields[i].field) +
+                        '</div>';
+                    } else {
+                        modalCU += '<div class="field">' +
+                        '<label>' + fields[i].label + '</label>' +
+                        '<input type="text" name="' + fields[i].name + '">' +
+                        '</div>';
+                    }
+                }
+                console.log(modalCU);
+                return modalCU;
+            }
+        }
 
         sEditor.defaults = {
             entity:     '',
@@ -234,7 +214,6 @@
                 }
             }
         };
-
 
         return sEditor;
     };

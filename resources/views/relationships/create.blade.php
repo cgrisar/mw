@@ -43,7 +43,7 @@
                             <i class="green plus icon" title="Create a new address"></i>
                         </div>
                     </h4>
-                    <table id="adressesTable" class="ui sortable table verticalalign">
+                    <table id="addressesTable" class="ui sortable table verticalalign">
                         <thead>
                             <tr>
                                 <th class="one wide">Type</th>
@@ -71,40 +71,68 @@
 
             // create the Editor
             sEditor = new $.fn.dataTable.sEditor(
-                    {   entity: 'relationship',
-                        "fields" : [
+                    {   entity: 'addresses',
+                        fields : [
                             { "structure" : "field",
+                                "width" : "eight",
                                 "type" : "input",
                                 "label": "name",
-                                "field": "name"
+                                "name": "name"
+                            },
+                            { "structure" : "field",
+                                "width" : "eight",
+                                "type" : "input",
+                                "label": "address",
+                                "name": "address"
                             },
                             { "structure": "multiple",
                                 "field":
                                         [{  "structure": "field",
                                             "type": "input",
+                                            "width": "two",
                                             "label": "zip",
                                             "name": "zip"
-                                        }, {  "structure": "field",
+                                        },
+                                        {  "structure": "field",
                                             "type": "input",
                                             "label": "city",
-                                            "name": "city"
+                                            "name": "city",
+                                            "width": "six"
                                         }]
                             },
                             { "structure": "field",
                                 "type": "input",
                                 "label": "country",
                                 "name": "country"
+                            },
+                            { "structure": "field",
+                                "type": "input",
+                                "label": "phone",
+                                "name": "phone",
+                                "width" : "eight"
+                            },
+                            { "structure": "field",
+                                "width" : "eight",
+                                "type": "input",
+                                "label": "e-mail",
+                                "name": "email"
+                            },
+                            { "structure": "field",
+                                "width" : "eight",
+                                "type": "input",
+                                "label": "contact",
+                                "name": "contact"
                             }
                         ]
                     });
             // display the datatable
 
 
-            $('#adressesTable').dataTable({
+            $('#addressesTable').dataTable({
 
                 "layout": '<div data-feature="dt_Table"></div>',
 
-                "ajax": "/admin/relationshipTmpAddressesAjax",
+                "ajax": "/admin/tmpaddressesIndexAjax",
 
                 "columns": [
                     { "data": null,
@@ -130,6 +158,7 @@
             } );
 
             $('#createAddressForm .field').change(function(){
+                // make sure the field isn't in error any more when the content is changed
                 $(this).removeClass("error")
             });
 

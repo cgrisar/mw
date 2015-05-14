@@ -2,6 +2,7 @@
     <head>
         <!-- references to css -->
         @include('partials.css')
+        <meta name="_token" content="{{ csrf_token() }}" />
 
     </head>
 

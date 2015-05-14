@@ -41,13 +41,17 @@ Route::get('warehouses/{id}/slots/{slot}/delete', 'SlotController@destroy');
  *  Routes for relationships
  */
 Route::get('admin/relationshipsAjax', 'RelationshipController@indexajax');
-Route::get('admin/relationshipAddressesAjax', 'RelationshipController@relationshipAddressesAjax');
-Route::get('admin/relationshipTmpAddressesAjax', 'RelationshipController@relationshipTmpAddressesAjax');
 Route::get('relationships', 'RelationshipController@index');
 Route::get('relationships/create', 'RelationshipController@create');
 
 Route::post('relationships/create', 'RelationshipController@store');
-Route::post('admin/relationshipTmpAddressesStoreAjax', 'RelationshipController@relationshipTmpAddressesStore');
+
+/*
+ * Routes for temporary addresses
+ */
+
+Route::get('/admin/tmpaddressesIndexAjax', 'TmpAddressesController@index');
+Route::post('/admin/tmpaddressesStoreAjax', 'TmpAddressesController@store');
 
 
 /*

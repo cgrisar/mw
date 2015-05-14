@@ -44,21 +44,6 @@ class RelationshipController extends Controller {
 
 	}
 
-	public function relationshipTmpAddressesAjax()
-	{
-		$addresses = Datatable::output(TmpAddress::all(), ['key'=> 'id', 'newkey' => 'Dt_Rowid', 'transform' => 'row_']);
-		return ['draw' => '1', 'RecordCount' => $addresses->count(), 'data' => $addresses];
-
-	}
-	public function relationshipTmpAddressesStore(Requests\AddressRequest $request)
-	{
-		$tmpAddress = new TmpAddress;
-		$tmpAddress->address = $request->get('address');
-		$tmpAddress->zip = $request->get('zip');
-		$tmpAddress->save();
-		return '{"success": true}';
-	}
-
 	/**
 	 * Show the form for creating a new resource.
 	 *

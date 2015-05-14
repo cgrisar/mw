@@ -22,49 +22,65 @@
         DataTable.sEditor = sEditor;
         $.fn.DataTable.sEditor = sEditor;
 
+        sEditor.defaults = {
+            parent:     '',
+            entity:     '',
+            fields:     '{}',
+            url:        '/admin/',
+            action:     '',
+            modalCU:    '',
+            modalD:     ''
+        };
+
         sEditor.prototype._constructor = function ( init ) {
             this.options = $.extend( true, {}, sEditor.defaults, init );
-            this.options.modalCU = $(sEditor.CUForm().create(init.fields))
-           // init.modalD = $(this.createDForm());
+            this.options.modalCU = $(sEditor.CUForm.create(this.options));
+            this.options.modalD = $(sEditor.DForm.create(this.options))
         };
 
         sEditor.prototype.show = function(action){
-            if(action != 'delete') {
-                var form = '#' + this.options.entity + "CUForm";
+            if (action != 'delete') {
+                var entity = this.options.entity;
+                var form = '#' + entity + "CUForm";
+                var tmpTable = this.options.url + 'tmp' + entity + 'StoreAjax';
+
+                if (action = 'edit') {
+                    // fill the fields with the data from the record
+
+                };
+
                 $("body").append(this.options.modalCU);
                 $(form)
-                    .modal('show');
-                /*
                     .modal({
-                        onShow: function(){
+
+                        onShow: function() {
                             var settings = $(this).settings;
 
                             $(form + " .field")
                                 .removeClass("error");
                             $(form + " .field :input")
                                 .attr("placeholder", "")
-                                .val("");
-                        }
-/*
-                        onApprove: function () {
+                                .val("")
+                        },
 
-                            var $_token = $('#token').val();
-                            var dataJs = {
-                                address: $("#address").val(),
-                                zip: $("#zip").val(),
-                                county: $("#county").val(),
-                                country: $("#country").val(),
-                                tel: $("#tel").val(),
-                                email: $("#email").val()
-                            };
+                        onApprove: function() {
+                            var dataJS = {};
+                            var ajaxSucceeded = false;
 
+                            // loop through all the input tags
+                            $(form + ' :input').each(function(index, data) {
+                                var key = $(this).attr("name");
+                                var value = $(this).val();
+                                dataJS[key] = value
+                            });
+                            console.log(dataJS);
                             $.ajax({
                                 type: 'POST',
                                 async: false,
-                                headers: {'X-XSRF-TOKEN': $_token},
+                                headers: { 'X-CSRF-Token': $('meta[name="_token"]').attr('content') },
                                 dataType: 'json',
-                                data: dataJs,
-                                url: '/admin/relationshipTmpAddressesStoreAjax',
+                                data: dataJS,
+                                url: tmpTable,
 
                                 success: function(){
                                     ajaxSucceeded = true;
@@ -74,7 +90,7 @@
                                 error: function (xhr, textstatus, errorThrown) {
                                     ajaxSucceeded = false;
                                     $.each(JSON.parse(xhr.responseText), function (index, element) {
-                                        $('#' + index)
+                                        $("input[name=" + index + "]")
                                             .attr("placeholder", element)
                                             .parent().addClass("error")
 
@@ -82,38 +98,43 @@
                                 }
                             });
 
-                            $('#adressesTable').DataTable().ajax.reload();
-                            return ajaxSucceeded;
+                            $('#' + entity +'Table').DataTable().ajax.reload();
+                            return ajaxSucceeded
 
                         }
-
                     })
-*/
+                    .modal('show');
+
+            } else {    // it's a Delete
+                var form = '#' + this.options.entity + "DForm";
+                $("body").append(this.options.modalD);
+                $(form)
+                    .modal('show');
+
             }
         };
 
-        sEditor.CUForm = {};
-        sEditor.CUForm.prototype = {
-            modalH: function() {
-                return '<div class="ui modal" id=">' + this.options.entity + 'CUForm">' +
+        sEditor.CUForm = {
+            modalH: function(entity) {
+                return '<div class="ui modal" id="' + entity + 'CUForm">' +
                     '<i class="close icon"></i>' +
-                    '<div class="header">' + this.options.entity + '</div>' +
+                    '<div class="header">' + entity + '</div>' +
                     '<div class="content">' +
                     '<div class="ui form">';
             },
 
-            modalE: function(){
-                return          '</div>' +       // form
-                    '</div>' +              // content
-                    '<div class="actions">' +
-                    '<div class="ui red cancel button">Cancel</div>' +
-                    '<div class="ui positive button">Save</div>' +
-                    '</div>' +
+            modalE: function(entity){
+                return      '</div>' +       // form
+                        '</div>' +              // content
+                        '<div class="actions">' +
+                            '<div class="ui red cancel button">Cancel</div>' +
+                            '<div class="ui positive button">Save</div>' +
+                        '</div>' +
                     '</div>';
             },
 
-            create: function (fields) {
-                return this.modalH() + this.addFields(fields) + this.modalE();
+            create: function (options) {
+                return this.modalH(options.entity) + this.addFields(options.fields) + this.modalE();
             },
 
             addFields: function (fields) {
@@ -125,92 +146,42 @@
                 // add the fields
                 for (var i = 0, iLen = fields.length; i < iLen; i++) {
                     if (fields[i].structure == "multiple") {
-                        modalCU += '<div class="' + enumerator[fields[i - 1].field.length] + ' fields">' +
-                        this.CUForm.addFields(fields[i].field) +
+                        modalCU += '<div class="' + enumerator[fields[i].field.length - 1] + ' fields">' +
+                        this.addFields(fields[i].field) +
                         '</div>';
                     } else {
-                        modalCU += '<div class="field">' +
-                        '<label>' + fields[i].label + '</label>' +
-                        '<input type="text" name="' + fields[i].name + '">' +
-                        '</div>';
+                        var tmpModalCU =
+                            '<div class="field">' +
+                                '<label>' + fields[i].label + '</label>' +
+                                '<input type="text" name="' + fields[i].name + '">' +
+                            '</div>';
+                        if (fields[i].width) {
+                            tmpModalCU = '<div class="' + fields[i].width + ' wide field">' + tmpModalCU + '</div>'
+                        }
+                        modalCU += tmpModalCU
                     }
                 }
-                console.log(modalCU);
+
                 return modalCU;
             }
-        }
-
-        sEditor.defaults = {
-            entity:     '',
-            fields:     '{}',
-            url:        '',
-            action:     '',
-            modalCU:    '',
-            modalD:     ''
         };
 
-        sEditor.methods = {
-
-            // initialisation method
-            init: function(options) {
-                if(options) {
-                    $.extend(defaults,options);
-                };
-                if(defaults.modalCU == '' && defaults.fields) {
-
-                    for (var i in defaults.fields) {
-                        var obj = defaults.fields[i];
-                        if (obj.multiple) {
-
-                            console.log("Array " + obj.multiple)
-                        } else {
-                            console.log("Field " + obj.name)
-                        }
-                    }
-                }
-            },
-
-            // show a Semantic Modal. arg = action
-            show: function(arg) {
-                if(arg == "delete") {
-                    var dialog = $(methods._createDeleteForm());
-                    $('body').append(dialog);
-                    $('#' + defaults.entity + 'DeleteModal').modal('show')
+        sEditor.DForm = {
+            create: function(options){
+                if(options.modalD == '') {
+                    return  '<div class="ui modal" id="' + options.entity + 'DForm">' +
+                                '<i class="close icon"></i>' +
+                                '<div class="header">Delete</div>' +
+                                    '<div class="content">Do you really want to delete this ' + options.entity + ' ?</div>' +
+                                        '<div class="actions">' +
+                                            '<div class="ui red cancel button">Cancel</div>' +
+                                            '<div class="ui positive button">OK</div>' +
+                                        '</div>' +
+                                    '</div>' +
+                                '</div>' +
+                            '</div>';
                 } else {
-                    var dialog = $(defaults.modalCU);
-                    $('body').append(dialog);
-                    $('#CreateUpdateModal').modal('show');
-                }
-            },
-
-            // private methods
-            _createDeleteForm: function(){
-                if(defaults.modalD == '') {
-                    return '<div class="ui modal" id="' + defaults.entity + 'DeleteModal">' +
-                        '<i class="close icon"></i>' +
-                        '<div class="header">Delete</div>' +
-                        '<div class="content">Do you really want to delete this ' + defaults.entity + ' ?</div>' +
-                        '<div class="actions">' +
-                        '<div class="ui red cancel button">Cancel</div>' +
-                        '<div class="ui positive button">OK</div>' +
-                        '</div>' +
-                        '</div>'
-                } else {
-                    return defaults.modalD
-                }
-            },
-
-            _createCreateUpdateForm: function(){
-                if(defaults.modalCU == '' && defaults.fields){
-                    for( var i in defaults.fields){
-                        if(defaults.fields[i].isArray()) {
-                            console.log("Array " + defaults.fields[i])
-                        } else {
-                            console.log("Field " + defaults.fields[i].name)
-                        }
-                    }
-                } else {
-
+                    return options.modalD
                 }
             }
         };

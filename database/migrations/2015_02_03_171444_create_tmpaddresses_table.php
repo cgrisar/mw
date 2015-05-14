@@ -26,7 +26,6 @@ class CreateTmpAddressesTable extends Migration {
 			$table->string('phone');
 			$table->string('email');
 			$table->string('contact');
-			$table->integer('customer_id')->unsigned();
 			$table->timestamps();
 
 		});

@@ -25,9 +25,10 @@ div.row
         padding:0.55em 1em;
     }
 
-.table.verticalalign td{
+.table.verticalalign td {
     vertical-align: top;
 }
+
 .ui.modal, .ui.grid
 {
     font-size: 0.875em;

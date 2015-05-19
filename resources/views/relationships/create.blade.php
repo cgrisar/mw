@@ -46,10 +46,12 @@
                     <table id="addressesTable" class="ui sortable table verticalalign">
                         <thead>
                             <tr>
+                                <th>Id</th>
                                 <th class="one wide">Type</th>
                                 <th class="six wide">Address</th>
                                 <th class="two wide">Phone</th>
                                 <th class="two wide">Email</th>
+                                <th class="one wide">Actions</th>
                             </tr>
                         </thead>
                     </table>
@@ -135,6 +137,10 @@
                 "ajax": "/admin/tmpaddressesIndexAjax",
 
                 "columns": [
+                    {
+                        "data": "Dt_Rowid",
+                        "visible": false
+                    },
                     { "data": null,
                         "render": function(row, type, val, meta){
                             return "1"
@@ -145,7 +151,10 @@
                             return row.address + "</br>" + row.zip + "&nbsp;" + row.county + "</br>" + row.country
                         }},
                     { "data": "phone" },
-                    { "data": "email" }
+                    { "data": "email" },
+                    { "data": null,
+                        "defaultContent": '<i class="blue edit icon"></i>&nbsp;&nbsp;&nbsp;<i class="red cancel icon"></i>'
+                    }
                 ]
             });
 
@@ -156,6 +165,16 @@
                 e.preventDefault();
                 sEditor.show('create')
             } );
+
+            $('#addressesTable').on('click', 'i.cancel', function(e){
+                e.preventDefault();
+                sEditor.show('delete')
+            });
+
+            $('#addressesTable').on('click', 'i.edit', function(e){
+                e.preventDefault();
+                sEditor.show('edit')
+            });
 
             $('#createAddressForm .field').change(function(){
                 // make sure the field isn't in error any more when the content is changed

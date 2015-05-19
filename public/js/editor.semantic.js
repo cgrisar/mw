@@ -42,11 +42,28 @@
             if (action != 'delete') {
                 var entity = this.options.entity;
                 var form = '#' + entity + "CUForm";
-                var tmpTable = this.options.url + 'tmp' + entity + 'StoreAjax';
+                var urlStore = this.options.url + 'tmp' + entity + 'StoreAjax';
+                var urlShow = this.options.url + 'tmp' + entity + 'ShowAjax';
 
                 if (action = 'edit') {
                     // fill the fields with the data from the record
 
+                    $.ajax({
+                        type: 'GET',
+                        async: true,
+                        headers: {'X-CSRF-Token': $('meta[name="_token"]').attr('content')},
+                        dataType: 'json',
+                        data: {id: 1},
+                        url: urlShow,
+
+                        success: function (xhr) {
+                            console.log(xhr.responseText);
+                            $.each(xhr, function (index, element) {
+                                $('input[name="' + index + '"]')
+                                    .val(element)
+                            })
+                        }
+                    })
                 };
 
                 $("body").append(this.options.modalCU);
@@ -66,6 +83,7 @@
                         onApprove: function() {
                             var dataJS = {};
                             var ajaxSucceeded = false;
+                            var tmpTable =
 
                             // loop through all the input tags
                             $(form + ' :input').each(function(index, data) {
@@ -80,7 +98,7 @@
                                 headers: { 'X-CSRF-Token': $('meta[name="_token"]').attr('content') },
                                 dataType: 'json',
                                 data: dataJS,
-                                url: tmpTable,
+                                url: urlStore,
 
                                 success: function(){
                                     ajaxSucceeded = true;
@@ -90,7 +108,7 @@
                                 error: function (xhr, textstatus, errorThrown) {
                                     ajaxSucceeded = false;
                                     $.each(JSON.parse(xhr.responseText), function (index, element) {
-                                        $("input[name=" + index + "]")
+                                        $('input[name="' + index + '"]')
                                             .attr("placeholder", element)
                                             .parent().addClass("error")
 
@@ -110,7 +128,6 @@
                 $("body").append(this.options.modalD);
                 $(form)
                     .modal('show');
-
             }
         };
 

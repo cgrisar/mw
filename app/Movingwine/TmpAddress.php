@@ -6,7 +6,7 @@ class TmpAddress extends Model {
 
 	//
 
-    protected $fillable = ['address', 'zip', 'county', 'country', 'phone', 'email', 'contact'];
+    protected $fillable = ['id', 'address', 'zip', 'county', 'country', 'phone', 'email', 'contact'];
     protected $table = "tmpAddresses";
 
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Movingwine\Datatable;
 use App\Movingwine\TmpAddress;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Input;
 
 class TmpAddressesController extends Controller {
 
@@ -49,9 +50,10 @@ class TmpAddressesController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function show($id)
+	public function show()
 	{
 		//
+		return TmpAddress::find(Input::get('id'))->toJson();
 	}
 
 	/**

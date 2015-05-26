@@ -46,7 +46,7 @@
                     <table id="addressesTable" class="ui sortable table verticalalign">
                         <thead>
                             <tr>
-                                <th>Id</th>
+                                <th class="one wide">Dt_Rowid</th>
                                 <th class="one wide">Type</th>
                                 <th class="six wide">Address</th>
                                 <th class="two wide">Phone</th>
@@ -78,12 +78,6 @@
                             { "structure" : "field",
                                 "width" : "eight",
                                 "type" : "input",
-                                "label": "name",
-                                "name": "name"
-                            },
-                            { "structure" : "field",
-                                "width" : "eight",
-                                "type" : "input",
                                 "label": "address",
                                 "name": "address"
                             },
@@ -105,7 +99,8 @@
                             { "structure": "field",
                                 "type": "input",
                                 "label": "country",
-                                "name": "country"
+                                "name": "country",
+                                "width": "eight"
                             },
                             { "structure": "field",
                                 "type": "input",
@@ -143,7 +138,7 @@
                     },
                     { "data": null,
                         "render": function(row, type, val, meta){
-                            return "1"
+                            return "2"
                         }
                     },
                     { "data": null,
@@ -167,13 +162,21 @@
             } );
 
             $('#addressesTable').on('click', 'i.cancel', function(e){
+                var table = $('#addressesTable').DataTable();
                 e.preventDefault();
-                sEditor.show('delete')
+                var rowIdx = table.cell( $(this).closest('td') ).index().row;
+                var strId = table.cell(rowIdx,0).data();
+                var id = parseInt(strId.slice(4));
+                sEditor.show('delete', id)
             });
 
             $('#addressesTable').on('click', 'i.edit', function(e){
+                var table = $('#addressesTable').DataTable();
                 e.preventDefault();
-                sEditor.show('edit')
+                var rowIdx = table.cell( $(this).closest('td') ).index().row;
+                var strId = table.cell(rowIdx,0).data();
+                var id = parseInt(strId.slice(4));
+                sEditor.show('edit', id)
             });
 
             $('#createAddressForm .field').change(function(){

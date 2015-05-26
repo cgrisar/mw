@@ -53,6 +53,8 @@ Route::post('relationships/create', 'RelationshipController@store');
 Route::get('/admin/tmpaddressesIndexAjax', 'TmpAddressesController@index');
 Route::get('/admin/tmpaddressesShowAjax', 'TmpAddressesController@show');
 Route::post('/admin/tmpaddressesStoreAjax', 'TmpAddressesController@store');
+Route::post('/admin/tmpaddressesUpdateAjax', 'TmpAddressesController@update');
+Route::post('/admin/tmpaddressesDestroyAjax', 'TmpAddressesController@destroy');
 
 
 /*

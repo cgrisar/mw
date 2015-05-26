@@ -23,16 +23,6 @@ class TmpAddressesController extends Controller {
 	}
 
 	/**
-	 * Show the form for creating a new resource.
-	 *
-	 * @return Response
-	 */
-	public function create()
-	{
-		//
-	}
-
-	/**
 	 * Store a newly created resource in storage.
 	 *
 	 * @return Response
@@ -57,25 +47,24 @@ class TmpAddressesController extends Controller {
 	}
 
 	/**
-	 * Show the form for editing the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function edit($id)
-	{
-		//
-	}
-
-	/**
 	 * Update the specified resource in storage.
 	 *
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function update($id)
+	public function update(Requests\AddressRequest $request)
 	{
 		//
+		$tmpAddress = TmpAddress::find(Input::get('id'));
+		$tmpAddress->address = Input::get('address');
+		$tmpAddress->zip = Input::get('zip');
+		$tmpAddress->county = Input::get('county');
+		$tmpAddress->country = Input::get('country');
+		$tmpAddress->phone = Input::get('phone');
+		$tmpAddress->email = Input::get('email');
+		$tmpAddress->contact = Input::get('contact');
+		$tmpAddress->save();
+		return '{"success": true}';
 	}
 
 	/**
@@ -84,9 +73,11 @@ class TmpAddressesController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function destroy($id)
+	public function destroy()
 	{
 		//
+		TmpAddress::find(Input::get('id'))->delete();
+		return '{"success": true}';
 	}
 
 }

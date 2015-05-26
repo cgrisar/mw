@@ -38,26 +38,30 @@
             this.options.modalD = $(sEditor.DForm.create(this.options))
         };
 
-        sEditor.prototype.show = function(action){
-            if (action != 'delete') {
-                var entity = this.options.entity;
-                var form = '#' + entity + "CUForm";
-                var urlStore = this.options.url + 'tmp' + entity + 'StoreAjax';
-                var urlShow = this.options.url + 'tmp' + entity + 'ShowAjax';
+        sEditor.prototype.show = function(action, id){
 
-                if (action = 'edit') {
-                    // fill the fields with the data from the record
+            var entity = this.options.entity;
+
+            var urlStore = this.options.url + 'tmp' + entity + 'StoreAjax';
+            var urlUpdate = this.options.url + 'tmp' + entity + 'UpdateAjax';
+            var urlShow = this.options.url + 'tmp' + entity + 'ShowAjax';
+            var urlDestroy = this.options.url + 'tmp' + entity + 'DestroyAjax';
+
+            if (action != 'delete') {
+                var form = '#' + entity + "CUForm";
+
+                // fill the fields of the forms with data if we're editing
+                if (action == 'edit') {
 
                     $.ajax({
                         type: 'GET',
                         async: true,
                         headers: {'X-CSRF-Token': $('meta[name="_token"]').attr('content')},
                         dataType: 'json',
-                        data: {id: 1},
+                        data: {id: id},
                         url: urlShow,
 
                         success: function (xhr) {
-                            console.log(xhr.responseText);
                             $.each(xhr, function (index, element) {
                                 $('input[name="' + index + '"]')
                                     .val(element)
@@ -71,8 +75,7 @@
                     .modal({
 
                         onShow: function() {
-                            var settings = $(this).settings;
-
+                            //make sure we remove the error state
                             $(form + " .field")
                                 .removeClass("error");
                             $(form + " .field :input")
@@ -83,26 +86,29 @@
                         onApprove: function() {
                             var dataJS = {};
                             var ajaxSucceeded = false;
-                            var tmpTable =
 
-                            // loop through all the input tags
+                            // loop through all the input tags to create the JSON
+                            if (action == "edit") {
+                                // transmit the id if we're editing
+                                dataJS['id'] = id
+                            };
                             $(form + ' :input').each(function(index, data) {
                                 var key = $(this).attr("name");
                                 var value = $(this).val();
                                 dataJS[key] = value
                             });
-                            console.log(dataJS);
+
                             $.ajax({
                                 type: 'POST',
                                 async: false,
                                 headers: { 'X-CSRF-Token': $('meta[name="_token"]').attr('content') },
                                 dataType: 'json',
                                 data: dataJS,
-                                url: urlStore,
+                                url: action == "create" ? urlStore : urlUpdate,
 
                                 success: function(){
                                     ajaxSucceeded = true;
-                                    console.log('did it')
+                                    console.log("record " + action + "ed " + id )
                                 },
 
                                 error: function (xhr, textstatus, errorThrown) {
@@ -123,10 +129,32 @@
                     })
                     .modal('show');
 
-            } else {    // it's a Delete
+            } else {   // it's a Delete
+
                 var form = '#' + this.options.entity + "DForm";
                 $("body").append(this.options.modalD);
                 $(form)
+                    .modal({
+                        onApprove: function () {
+                            var ajaxSucceeded = false;
+
+                            $.ajax({
+                                type: 'POST',
+                                async: false,
+                                headers: {'X-CSRF-Token': $('meta[name="_token"]').attr('content')},
+                                dataType: 'json',
+                                data: {id: id},
+                                url: urlDestroy,
+
+                                success: function() {
+                                    ajaxSucceeded = true;
+                                    console.log('Destroyed record ' + id);
+                                }
+                            });
+                            $('#' + entity +'Table').DataTable().ajax.reload();
+                            return ajaxSucceeded
+                        }
+                    })
                     .modal('show');
             }
         };
@@ -163,9 +191,9 @@
                 // add the fields
                 for (var i = 0, iLen = fields.length; i < iLen; i++) {
                     if (fields[i].structure == "multiple") {
-                        modalCU += '<div class="' + enumerator[fields[i].field.length - 1] + ' fields">' +
-                        this.addFields(fields[i].field) +
-                        '</div>';
+                        modalCU +=  '<div class="' + enumerator[fields[i].field.length - 1] + ' fields">' +
+                                        this.addFields(fields[i].field) +
+                                    '</div>';
                     } else {
                         var tmpModalCU =
                             '<div class="field">' +
@@ -174,11 +202,10 @@
                             '</div>';
                         if (fields[i].width) {
                             tmpModalCU = '<div class="' + fields[i].width + ' wide field">' + tmpModalCU + '</div>'
-                        }
+                        };
                         modalCU += tmpModalCU
                     }
                 }
-
                 return modalCU;
             }
         };

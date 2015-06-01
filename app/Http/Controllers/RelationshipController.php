@@ -17,12 +17,10 @@ class RelationshipController extends Controller {
 	 * Display a listing of the resource.
 	 *
 	 * @return Response
-	 */
-	public function index()
+	*/
+	public function spa()
 	{
-		//
 		$relationships = Relationship::all();
-
 		return view('relationships.index', compact('relationships'));
 	}
 
@@ -30,18 +28,11 @@ class RelationshipController extends Controller {
 	 * Return a json array with the relationships
 	 * @return array
      */
-	public function indexajax()
+	public function index()
 	{
 		//
 		$relationships = Datatable::output(Relationship::all(), ['key'=> 'id', 'newkey' => 'Dt_Rowid', 'transform' => 'row_']);
 		return ['draw' => '1', 'RecordCount' => $relationships->count(), 'data' => $relationships];
-	}
-
-	public function relationshipAddressesAjax()
-	{
-		$addresses = Datatable::output(Address::all(), ['key'=> 'id', 'newkey' => 'Dt_Rowid', 'transform' => 'row_']);
-		return ['draw' => '1', 'RecordCount' => $addresses->count(), 'data' => $addresses];
-
 	}
 
 	/**
@@ -52,7 +43,7 @@ class RelationshipController extends Controller {
 	public function create()
 	{
 		//
-		return view('relationships.create', compact('warehouse'));
+		return view('relationships.create');
 	}
 
 	/**
@@ -62,8 +53,22 @@ class RelationshipController extends Controller {
 	 */
 	public function store(Requests\RelationshipRequest $request)
 	{
-		//
-		Relationship::create($request->all());
+		// first, store the core data of the relationship
+		$relationship = Relationship::create($request->all());
+
+		// now get the data from tmpAddresses and store them in Addresses
+		$tmpAddresses = TmpAddress::all();
+		foreach ($tmpAddresses as $tmpAddress) {
+			if (!$tmpAddress['relationship_id']) {
+				$tmpAddress['relationship_id'] = $relationship->id;
+			};
+			$addressModel = new Address($tmpAddress->toArray());
+			$relationship->addresses()->save($addressModel);
+		}
+
+		// and delete all content in the TmpAddress table
+		TmpAddress::truncate();
+
 		return redirect('relationships');
 	}
 
@@ -75,7 +80,13 @@ class RelationshipController extends Controller {
 	 */
 	public function show($id)
 	{
-		//
+		// copy the data from addresses to tmpaddresses
+		$addresses = Address::where('relationship_id', '=', $id)->get();
+		foreach($addresses as $address){
+			$tmpAddress = TmpAddress::create($address->toArray());
+		};
+		// show the edit form
+		return view('relationships.edit');
 	}
 
 	/**
@@ -97,7 +108,9 @@ class RelationshipController extends Controller {
 	 */
 	public function update($id)
 	{
-		//
+		// update the record in the relationship table
+		// destroy the relationship's addresses in the addresses table
+		// store the tmpaddresses into the addresses table
 	}
 
 	/**

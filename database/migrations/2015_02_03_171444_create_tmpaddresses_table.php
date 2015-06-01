@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTmpAddressesTable extends Migration {
+class CreateTmpaddressesTable extends Migration {
 
 	/**
 	 * Create a temporary adresses Table
@@ -26,6 +26,7 @@ class CreateTmpAddressesTable extends Migration {
 			$table->string('phone');
 			$table->string('email');
 			$table->string('contact');
+			$table->integer('relationship_id')->unsigned();
 			$table->timestamps();
 
 		});
@@ -39,7 +40,7 @@ class CreateTmpAddressesTable extends Migration {
 	public function down()
 	{
 		//
-		Schema::drop('addresses');
+		Schema::drop('tmpaddresses');
 	}
 
 }

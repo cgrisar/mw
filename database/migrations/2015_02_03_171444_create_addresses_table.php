@@ -24,8 +24,8 @@ class CreateAddressesTable extends Migration {
 			$table->string('phone');
 			$table->string('email');
 			$table->string('contact');
-			$table->integer('customer_id')->unsigned();
-			$table->foreign('customer_id')->references('id')->on('relationships');
+			$table->integer('relationship_id')->unsigned();
+			$table->foreign('relationship_id')->references('id')->on('relationships');
 			$table->timestamps();
 
 		});

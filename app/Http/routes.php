@@ -40,10 +40,10 @@ Route::get('warehouses/{id}/slots/{slot}/delete', 'SlotController@destroy');
 /*
  *  Routes for relationships
  */
-Route::get('admin/relationshipsAjax', 'RelationshipController@indexajax');
-Route::get('relationships', 'RelationshipController@index');
+Route::get('admin/relationshipsIndexAjax', 'RelationshipController@index');
+Route::get('relationships', 'RelationshipController@spa');
 Route::get('relationships/create', 'RelationshipController@create');
-
+Route::get('relationships/edit/{id}', 'RelationshipController@show');
 Route::post('relationships/create', 'RelationshipController@store');
 
 /*
@@ -55,6 +55,7 @@ Route::get('/admin/tmpaddressesShowAjax', 'TmpAddressesController@show');
 Route::post('/admin/tmpaddressesStoreAjax', 'TmpAddressesController@store');
 Route::post('/admin/tmpaddressesUpdateAjax', 'TmpAddressesController@update');
 Route::post('/admin/tmpaddressesDestroyAjax', 'TmpAddressesController@destroy');
+Route::get('/admin/tmpaddressesTruncateAjax', 'TmpAddressesController@truncate');
 
 
 /*

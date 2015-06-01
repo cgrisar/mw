@@ -42,15 +42,19 @@
 
             $('#relationshipTable').dataTable({
 
-                "ajax": "admin/relationshipsajax",
+                "ajax": "admin/relationshipsIndexAjax",
 
                 "columns": [
                     { "data": "name" },
                     { "data": "vat" },
-                    { "data": null,
-                      "orderable": false,
-                      "className": "center aligned",
-                      "defaultContent": "<i class='edit icon'></i> <i class='delete icon'></i></td>" }
+                    {
+                        "data": null,
+                        "orderable": false,
+                        "className": "center aligned",
+                        "render": function (row, type, val, meta) {
+                            return "<a href='relationships/edit/" + row.Dt_Rowid.slice(4) + "'><i class='edit icon'></i> <i class='delete icon'></i></td>"
+                        }
+                    }
                 ]
             });
 

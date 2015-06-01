@@ -14,7 +14,7 @@ class Relationship extends Model {
 
     public function addresses()
     {
-        return $this->hasMany('App\Movingwine\Addresses');
+        return $this->hasMany('App\Movingwine\Address');
     }
 
     public function relationshipType()

@@ -2,65 +2,65 @@
 
 @section('content')
 
-    <h2 class="ui header">Create Relationship</h2>
+    <h2 class="ui header">Edit Relationship</h2>
 
     <h3 class="ui dividing header">Relationship information
         <div class="floatrighticon">
-            <a href="{!! url('relationships/create') !!}" title="Save">
+            <a href="{!! url('relationships/update') !!}" title="Save">
                 <i class="black save circle icon"></i>
             </a>
-            <a title="Cancel">
+            <a href="{!! url('relationships') !!}" title="Cancel">
                 <i class="red cancel circle icon"></i>
             </a>
         </div>
     </h3>
 
     {!! Form::open(['class' => 'ui form', 'url' => 'relationships/create']) !!}
-        <div class="ui grid">
-            <div class="row">
-                <div class="eight wide column">
+    <div class="ui grid">
+        <div class="row">
+            <div class="eight wide column">
 
-                    @include('partials.errors')
+                @include('partials.errors')
 
 
-                    <div class="required field">
-                        <label for="name">Name</label>
-                        <input type="text" placeholder="Name" name="name" value="{{old('name')}}" class="six wide column">
-                    </div>
-
-                    <div class="required field">
-                        <label for="vat">VAT</label>
-                        <input type="text" placeholder="VAT" name="vat" value="{{old('vat')}}">
-                    </div>
+                <div class="required field">
+                    <label for="name">Name</label>
+                    <input type="text" placeholder="Name" name="name" value="{{old('name')}}" class="six wide column">
                 </div>
-            </div>
 
-            <div class="row">
-                <div class="twelve wide column">
-                    <div class="hidden divider"></div>
-                    <h4 class="ui dividing header">Adresses
-                        <div class="floatrighticon">
-                            <i class="green plus icon" title="Create a new address"></i>
-                        </div>
-                    </h4>
-                    <table id="addressesTable" class="ui sortable table verticalalign">
-                        <thead>
-                            <tr>
-                                <th class="one wide">Dt_Rowid</th>
-                                <th class="one wide">Type</th>
-                                <th class="six wide">Address</th>
-                                <th class="two wide">Phone</th>
-                                <th class="two wide">Email</th>
-                                <th class="one wide">Actions</th>
-                            </tr>
-                        </thead>
-                    </table>
-
-                    {!! Form::submit('Save', ['class' => 'ui blue right floated button']) !!}
-
+                <div class="required field">
+                    <label for="vat">VAT</label>
+                    <input type="text" placeholder="VAT" name="vat" value="{{old('vat')}}">
                 </div>
             </div>
         </div>
+
+        <div class="row">
+            <div class="twelve wide column">
+                <div class="hidden divider"></div>
+                <h4 class="ui dividing header">Adresses
+                    <div class="floatrighticon">
+                        <i class="green plus icon" title="Create a new address"></i>
+                    </div>
+                </h4>
+                <table id="addressesTable" class="ui sortable table verticalalign">
+                    <thead>
+                    <tr>
+                        <th class="one wide">Dt_Rowid</th>
+                        <th class="one wide">Type</th>
+                        <th class="six wide">Address</th>
+                        <th class="two wide">Phone</th>
+                        <th class="two wide">Email</th>
+                        <th class="one wide">Actions</th>
+                    </tr>
+                    </thead>
+                </table>
+
+                {!! Form::submit('Save', ['class' => 'ui blue right floated button']) !!}
+
+            </div>
+        </div>
+    </div>
     {!! Form::close() !!}
 
 @endsection
@@ -70,14 +70,6 @@
         var sEditor;
 
         $(document).ready(function(){
-
-            window.onbeforeunload = function() {
-                $.ajax({
-                    type: 'GET',
-                    headers: {'X-CSRF-Token': $('meta[name="_token"]').attr('content')},
-                    url: '/admin/tmpaddressesTruncateAjax'
-                })
-            };
 
             // create the Editor
             sEditor = new $.fn.dataTable.sEditor(
@@ -97,12 +89,12 @@
                                             "label": "zip",
                                             "name": "zip"
                                         },
-                                        {  "structure": "field",
-                                            "type": "input",
-                                            "label": "city",
-                                            "name": "city",
-                                            "width": "six"
-                                        }]
+                                            {  "structure": "field",
+                                                "type": "input",
+                                                "label": "city",
+                                                "name": "city",
+                                                "width": "six"
+                                            }]
                             },
                             { "structure": "field",
                                 "type": "input",

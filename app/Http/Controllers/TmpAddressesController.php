@@ -80,4 +80,8 @@ class TmpAddressesController extends Controller {
 		return '{"success": true}';
 	}
 
+	public function truncate(){
+		TmpAddress::truncate();
+	}
+
 }
